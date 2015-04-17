@@ -29,8 +29,9 @@ public class Bonoloto implements ActionListener {
     JTextField nWin, nAcertado;
     JLabel premiados, aciertos;
     Integer[][] parrilla;
+    String[] select = new String[6];
     int columnas = 5, filas = 10, cont, ac;
-    int clicks = 0;
+    int clicks = 0, iguales = 0, aux2 = 0;
 
     public Bonoloto() {
         marco = new JFrame(" Bonoloto");
@@ -80,6 +81,7 @@ public class Bonoloto implements ActionListener {
         panelB.add(aciertos);
         panelB.add(nAcertado);
         boton1.addActionListener(this);
+        boton2.setEnabled(false);
         panelB.add(boton1);
         boton2.addActionListener(this);
         panelB.add(boton2);
@@ -107,11 +109,13 @@ public class Bonoloto implements ActionListener {
         for (int i = 0; i < parrilla.length; i++) {
             for (int j = 0; j < parrilla[i].length; j++) {
                 if (e.getSource() == boton[i][j]) {
-                    clicks++;
                     boton[i][j].setEnabled(false);
                     boton[i][j].setBackground(Color.red);
+                    select[clicks] = (boton[i][j].getText());
+                    clicks++;
                 }
-                if (clicks >= 6) {
+                if (clicks == 6) {
+                    boton2.setEnabled(true);
                     for (int k = 0; k < parrilla.length; k++) {
                         for (int l = 0; l < parrilla[k].length; l++) {
                             boton[k][l].setEnabled(false);
@@ -122,9 +126,13 @@ public class Bonoloto implements ActionListener {
         }
 
         if (e.getSource() == boton2) {
+            aux2 = 1;
             String premio = "";
             int[] nPremiados = new int[6];
             boolean flag;
+            iguales = 0;
+            boton2.setEnabled(false);
+
             for (int j = 0; j < 6; j++) {
                 do {
                     flag = false;
@@ -143,7 +151,30 @@ public class Bonoloto implements ActionListener {
                 premio = premio + "  " + nPremiados[i];
             }
             nWin.setText(premio);
+            for (int i = 0; i < select.length; i++) {
+                for (int j = 0; j < select.length; j++) {
+                    if (nPremiados[i] == Integer.parseInt(select[j])) {
+                        iguales++;
+                    }
+                }
+            }
+            nAcertado.setText(String.valueOf(iguales));
+            for (int i = 0; i < parrilla.length; i++) {
+                for (int j = 0; j < parrilla[i].length; j++) {
+                    for (int k = 0; k < nPremiados.length; k++) {
+                        for (int l = 0; l < select.length; l++) {
+
+                            if (String.valueOf(nPremiados[k]).equals(select[l])) {
+                                if (boton[i][j].getText().equals(select[l])) {
+                                    boton[i][j].setBackground(Color.green);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+
         if (e.getSource() == boton1) {
             nWin.setText(null);
             nAcertado.setText(null);
@@ -153,6 +184,9 @@ public class Bonoloto implements ActionListener {
                     boton[i][j].setBackground(null);
                     boton[0][0].setEnabled(false);
                     clicks = 0;
+                    iguales = 0;
+                    boton2.setEnabled(false);
+                    aux2 = 0;
                 }
             }
         }
